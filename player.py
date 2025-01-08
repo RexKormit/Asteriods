@@ -38,9 +38,11 @@ class Player(circleshape.CircleShape):
         self.position += axis
 
     def shoot(self,dt):
-        self.timer = 0.3
-        shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
-        shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        
+        if self.timer <= 0:
+            self.timer = PLAYER_SHOOT_COOLDOWN
+            shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
+            shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
 
         
     def report_situation(self):
@@ -51,6 +53,7 @@ class Player(circleshape.CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        self.timer -= dt
         #self.position += self.velocity
 
         if keys[pygame.K_a]:
