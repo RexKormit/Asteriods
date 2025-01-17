@@ -21,7 +21,6 @@ class Asteroid(circleshape.CircleShape):
             angle = random.uniform(20,50)
             new_radius = self.radius - ASTEROID_MIN_RADIUS
             for i in range(0,2):
-                print(i)
                 daughter_asteroid = Asteroid(self.position.x,self.position.y,new_radius)
                 if i == 0:
                     daughter_asteroid.velocity = self.velocity.rotate(angle) * 1.2

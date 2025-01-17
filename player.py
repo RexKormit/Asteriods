@@ -8,9 +8,10 @@ class Player(circleshape.CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
-        self.timer = 0
-
-   
+        self.shoot_timer = 0
+        self.dash_timer = 0
+        self.__score = 0
+       
     # in the player class
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -34,17 +35,28 @@ class Player(circleshape.CircleShape):
         #accleration = pygame.Vector2((PLAYER_ACCLERATION * dt) * numpy.cos(theta),(PLAYER_ACCLERATION * dt) * numpy.sin(theta))
         #self.velocity += accleration
 
-        axis = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SPEED * dt
-        self.position += axis
+        dst = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SPEED * dt
+        self.position += dst
 
     def shoot(self,dt):
         
-        if self.timer <= 0:
-            self.timer = PLAYER_SHOOT_COOLDOWN
+        if self.shoot_timer <= 0:
+            self.shoot_timer = PLAYER_SHOOT_COOLDOWN
             shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
             shot.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+    
+    def increase_score(self):
+        self.__score += 1
 
-        
+    def get_score(self):
+        return self.__score
+    
+    def dash(self, dt):
+        if self.dash_timer <= 0:
+            self.dash_timer = PLAYER_DASH_COOLDOWN
+            dst = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SPEED * dt * 10
+            self.position += dst
+
     def report_situation(self):
         print("=======================================================")
         print(f"Rotation: {self.rotation}")
@@ -53,7 +65,8 @@ class Player(circleshape.CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
-        self.timer -= dt
+        self.shoot_timer -= dt
+        self.dash_timer -= dt
         #self.position += self.velocity
 
         if keys[pygame.K_a]:
@@ -66,6 +79,8 @@ class Player(circleshape.CircleShape):
             self.report_situation()
         if keys[pygame.K_SPACE]:
             self.shoot(dt)
+        if keys[pygame.K_e]:
+            self.dash(dt)
 
 class Shot(circleshape.CircleShape):
 
